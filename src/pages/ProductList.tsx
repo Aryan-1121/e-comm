@@ -2,7 +2,10 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { fetchProducts } from '../redux/productsSlice';
-import { log } from 'console';
+import { addItemToCart } from '../redux/cartSlice';
+import { Link } from 'react-router-dom';
+
+
 
 const ProductList: React.FC = () => {
   const dispatch = useDispatch<any>();
@@ -20,8 +23,27 @@ const ProductList: React.FC = () => {
     dispatch(fetchProducts(nextPage));
   };
 
+  const handleAddToCart = (product: any) => {
+    const cartItem = {
+      id: product.id,
+      title: product.title,
+      price: product.price,
+      quantity: 1,
+      image: product.image,
+    };
+    dispatch(addItemToCart(cartItem));
+  };
+
   return (
+
+
+
     <div className="container mx-auto p-4">
+      <Link
+        to="/cart"
+        className=" inline-block mb-4 px-6 py-2 text-white bg-yellow-500 rounded-full hover:bg-yellow-700">
+        🛒 Go to Cart
+      </Link>
       <h1 className="text-3xl font-bold mb-4">Product List</h1>
       {loading && <p>Loading...</p>}
       {error && <p className="text-red-500">Error: {error}</p>}
@@ -32,6 +54,12 @@ const ProductList: React.FC = () => {
             <h2 className="text-xl font-bold mt-2">{product.title}</h2>
             <p>${product.price}</p>
             <p className="text-sm text-gray-600">{product.description}</p>
+            {/* add to cart button  */}
+            <button
+              onClick={() => handleAddToCart(product)}
+              className="mt-2 px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-400"
+            >Add to Cart
+            </button>
           </div>
         ))}
       </div>
