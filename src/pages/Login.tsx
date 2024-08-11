@@ -11,10 +11,9 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-    //  API call to authenticate the user
-    // Assuming getting a token from the API response
 
-    const token = 'dummy-token'; // will get replaced with actual token
+
+    const token = 'dummy-token'; // will replace with actual token
 
     // storing token in local storage
     localStorage.setItem('authToken', token);

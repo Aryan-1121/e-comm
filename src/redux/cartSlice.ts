@@ -1,5 +1,6 @@
 // src/redux/cartSlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import axios from 'axios';
 
 interface CartItem {
   id: number;
@@ -9,12 +10,23 @@ interface CartItem {
   image: string;
 }
 
+
+interface Coupon {
+  id: number;
+  code: string;
+  discount: number;
+}
+
 interface CartState {
   items: CartItem[];
+  appliedCoupons: Coupon[];
+  availableCoupons: Coupon[];
 }
 
 const initialState: CartState = {
   items: [],
+  appliedCoupons: [],
+  availableCoupons: []
 };
 
 const cartSlice = createSlice({
@@ -38,9 +50,33 @@ const cartSlice = createSlice({
         item.quantity = action.payload.quantity;
       }
     },
+
+    applyCoupon(state, action: PayloadAction<Coupon>) {
+      const totalPrice = state.items.reduce((total, item) => total + item.price * item.quantity, 0);
+      const maxCoupons = totalPrice > 1200 ? 2 : 1;
+
+      if (state.appliedCoupons.length < maxCoupons) {
+        state.appliedCoupons.push(action.payload);
+      }
+    },
+    removeCoupon(state, action: PayloadAction<number>) {
+      state.appliedCoupons = state.appliedCoupons.filter(coupon => coupon.id !== action.payload);
+    },
+    setAvailableCoupons(state, action: PayloadAction<Coupon[]>) {
+      state.availableCoupons = action.payload;
+    },
   },
 });
 
-export const { addItemToCart, removeItemFromCart, updateItemQuantity } = cartSlice.actions;
+export const { addItemToCart, removeItemFromCart, updateItemQuantity, applyCoupon, removeCoupon, setAvailableCoupons } = cartSlice.actions;
+
+export const fetchCoupons = () => async (dispatch: any) => {
+  try {
+    const response = await axios.get('/coupons.json');
+    dispatch(setAvailableCoupons(response.data));
+  } catch (error) {
+    console.error("Failed to fetch coupons", error);
+  }
+};
 
 export default cartSlice.reducer;
