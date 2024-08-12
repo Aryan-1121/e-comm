@@ -22,7 +22,11 @@ interface CartState {
   appliedCoupons: Coupon[];
   availableCoupons: Coupon[];
 }
-
+// interface CartState {
+//   items: Array<{ id: number; title: string; price: number; quantity: number; image: string }>;
+//   appliedCoupons: Array<{ id: number; code: string; discount: number }>;
+//   availableCoupons: Array<{ id: number; code: string; discount: number }>;
+// }
 const initialState: CartState = {
   items: [],
   appliedCoupons: [],
@@ -44,6 +48,12 @@ const cartSlice = createSlice({
     removeItemFromCart(state, action: PayloadAction<number>) {
       state.items = state.items.filter(item => item.id !== action.payload);
     },
+
+    clearCart: (state) => {
+      state.items = []; // Clears all items in the cart
+      state.appliedCoupons = []; //clear applied coupons
+    },
+
     updateItemQuantity(state, action: PayloadAction<{ id: number; quantity: number }>) {
       const item = state.items.find(item => item.id === action.payload.id);
       if (item && action.payload.quantity > 0) {
@@ -65,10 +75,12 @@ const cartSlice = createSlice({
     setAvailableCoupons(state, action: PayloadAction<Coupon[]>) {
       state.availableCoupons = action.payload;
     },
+
+
   },
 });
 
-export const { addItemToCart, removeItemFromCart, updateItemQuantity, applyCoupon, removeCoupon, setAvailableCoupons } = cartSlice.actions;
+export const { addItemToCart, removeItemFromCart, clearCart, updateItemQuantity, applyCoupon, removeCoupon, setAvailableCoupons } = cartSlice.actions;
 
 export const fetchCoupons = () => async (dispatch: any) => {
   try {
