@@ -25,9 +25,11 @@ const initialState: ProductsState = {
 // handling fetching of products from the API  below
 export const fetchProducts = createAsyncThunk(
   'products/fetchProducts',
-  async (page: number) => {
+  async (limit: number) => {
     const response = await axios.get(
-      `https://fakestoreapi.com/products?limit=5&page=${page}`
+      // `https://fakestoreapi.com/products?limit=5&page=${page}`
+      `https://fakestoreapi.com/products?limit=${limit}`
+
     );
     return response.data;
   }
