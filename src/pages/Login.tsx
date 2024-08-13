@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { loginSuccess } from '../redux/authSlice';
+import axios from 'axios';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -11,18 +12,31 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
 
   const handleLogin = async () => {
+    try {
+      axios.post('https://fakestoreapi.com/auth/login', { email, password }).then((res) => {
+        console.log(res);
+
+        if (res.data) {
+          localStorage.setItem('authToken', res.data.token);
+
+          // saving it to  redux state
+          dispatch(loginSuccess(res.data.token));
+          navigate('/products');
+          // Save token in local storage
+        } else {
+          alert('Invalid email or password');
+        }
+      }).catch((err) => {
+        console.log(err);
+      });
 
 
-    const token = 'dummy-token'; // will replace with actual token
+    } catch (error) {
+      console.log("error while logging in ", error);
+    }
 
-    // storing token in local storage
-    localStorage.setItem('authToken', token);
 
-    // saving it to  redux state
-    dispatch(loginSuccess(token));
 
-    // Redirect to the product list page
-    navigate('/products');
   };
 
   return (
