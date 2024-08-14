@@ -15,11 +15,20 @@ function App() {
       {token && <Navbar />} {/* Only show Navbar if the user is logged in */}
 
       <Routes>
-        <Route path="/login" element={<Login />} />
+        <Route
+          path="/products"
+          element={token ? <ProductList /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/cart"
+          element={token ? <Cart /> : <Navigate to="/login" />}
+        />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/products" element={token ? <ProductList /> : <Navigate to="/login" />} />
-        <Route path="/cart" element={token ? <Cart /> : <Navigate to="/login" />} />
-        <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="/login" element={<Login />} />
+        <Route
+          path="/"
+          element={<Navigate to={token ? "/products" : "/login"} />}
+        />
       </Routes>
     </Router>
   );

@@ -45,6 +45,21 @@ const cartSlice = createSlice({
         state.items.push(action.payload);
       }
     },
+
+    incrementItemQuantity(state, action: PayloadAction<number>) {
+      const item = state.items.find(item => item.id === action.payload);
+      if (item) {
+        item.quantity += 1;
+      }
+    },
+    decrementItemQuantity(state, action: PayloadAction<number>) {
+      const item = state.items.find(item => item.id === action.payload);
+      if (item && item.quantity > 1) {
+        item.quantity -= 1;
+      } else if (item && item.quantity === 1) {
+        state.items = state.items.filter(item => item.id !== action.payload);
+      }
+    },
     removeItemFromCart(state, action: PayloadAction<number>) {
       state.items = state.items.filter(item => item.id !== action.payload);
     },
@@ -80,7 +95,7 @@ const cartSlice = createSlice({
   },
 });
 
-export const { addItemToCart, removeItemFromCart, clearCart, updateItemQuantity, applyCoupon, removeCoupon, setAvailableCoupons } = cartSlice.actions;
+export const { addItemToCart, incrementItemQuantity, decrementItemQuantity, removeItemFromCart, clearCart, updateItemQuantity, applyCoupon, removeCoupon, setAvailableCoupons } = cartSlice.actions;
 
 export const fetchCoupons = () => async (dispatch: any) => {
   try {

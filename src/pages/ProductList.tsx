@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 import { fetchProducts } from '../redux/productsSlice';
-import { addItemToCart } from '../redux/cartSlice';
+import { addItemToCart, decrementItemQuantity, incrementItemQuantity } from '../redux/cartSlice';
 import { Link } from 'react-router-dom';
 
 
@@ -12,6 +12,8 @@ const ProductList: React.FC = () => {
   const products = useSelector((state: RootState) => state.products.products);
   const loading = useSelector((state: RootState) => state.products.loading);
   const error = useSelector((state: RootState) => state.products.error);
+  const cartItems = useSelector((state: RootState) => state.cart.items);
+
 
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [filteredProducts, setFilteredProducts] = useState(products);
@@ -57,6 +59,23 @@ const ProductList: React.FC = () => {
     dispatch(addItemToCart(cartItem));
   };
 
+
+
+  const handleIncrement = (id: number) => {
+    dispatch(incrementItemQuantity(id));
+  };
+
+  const handleDecrement = (id: number) => {
+    dispatch(decrementItemQuantity(id));
+  };
+
+  const getQuantity = (id: number) => {
+    const item = cartItems.find(item => item.id === id);
+    return item ? item.quantity : 0;
+  };
+
+
+
   return (
 
     <div className="container mx-auto p-4">
@@ -89,11 +108,33 @@ const ProductList: React.FC = () => {
             <p>${product.price}</p>
             <p className="text-sm text-gray-600">{product.description}</p>
             {/* add to cart button  */}
+            <div className='flex items-center justify-between'>
             <button
               onClick={() => handleAddToCart(product)}
-              className="mt-2 px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-400"
+                className="mt-2 px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-400 "
             >Add to Cart
             </button>
+              <div className='mr-10'>
+
+                <button
+                  onClick={() => handleDecrement(product.id)}
+                  className="px-2 py-1 bg-gray-300 rounded"
+                >
+                  -
+                </button>
+                <span className="px-4">{getQuantity(product.id)}</span>
+                <button
+                  onClick={() => handleIncrement(product.id)}
+                  className="px-2 py-1 bg-gray-300 rounded"
+                >
+                  +
+                </button>
+              </div>
+
+
+
+            </div>
+
           </div>
         ))}
       </div>
