@@ -1,19 +1,20 @@
 // src/pages/Login.tsx
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { loginSuccess } from '../redux/authSlice';
 import axios from 'axios';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleLogin = async () => {
     try {
-      axios.post('https://fakestoreapi.com/auth/login', { email, password }).then((res) => {
+      axios.post('https://fakestoreapi.com/auth/login', { username, password }).then((res) => {
         console.log(res);
 
         if (res.data) {
@@ -22,6 +23,7 @@ const Login: React.FC = () => {
           // saving it to  redux state
           dispatch(loginSuccess(res.data.token));
           navigate('/products');
+          return <Navigate to="/products" />
           // Save token in local storage
         } else {
           alert('Invalid email or password');
@@ -46,13 +48,13 @@ const Login: React.FC = () => {
           <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-              Email
+              username
             </label>
             <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              id="username"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
           </div>
